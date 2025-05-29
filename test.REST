@@ -1,1 +1,4 @@
-GET http://localhost:3000/products
+GET http://localhost:3000/customers
+
+###
+GET http://localhost:3000/customers/6837d804997f4dc80c870293
