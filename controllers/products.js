@@ -24,11 +24,15 @@ const getSingle = async (req, res) => {
 const createProduct = async (req, res) => {
     //#swagger.tags=["Products"];
     const product = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        favoriteColor: req.body.favoriteColor,
-        birthday: req.body.birthday
+        name: req.body.name,
+        brand: req.body.brand,
+        price: req.body.price,
+        stock: req.body.stock,
+        category: req.body.category,
+        storage:req.body.specifications.storage,
+        ram: req.body.specifications.ram,
+        screenSize: req.body.specifications.screenSize,
+        isAvailable: req.body.isAvailable
     }
     const response = await mongodb.getDatabase().db().collection('products').insertOne(product);
     if (response.acknowledged > 0) {
@@ -42,11 +46,15 @@ const updateProduct = async (req, res) => {
     //#swagger.tags=["Products"];
     const productId = new ObjectId(req.params.id);
     const product = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        favoriteColor: req.body.favoriteColor,
-        birthday: req.body.birthday
+        name: req.body.name,
+        brand: req.body.brand,
+        price: req.body.price,
+        stock: req.body.stock,
+        category: req.body.category,
+        storage:req.body.specifications.storage,
+        ram: req.body.specifications.ram,
+        screenSize: req.body.specifications.screenSize,
+        isAvailable: req.body.isAvailable
     }
     const response = await mongodb.getDatabase().db().collection('products').replaceOne({ '_id': productId }, product);
     if (response.modifiedCount > 0) {
