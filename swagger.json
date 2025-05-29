@@ -5,7 +5,7 @@
     "description": "This is my personal project of Store API of CSE 341 Web Services Class",
     "version": "1.0.0"
   },
-  "host": "https://cse-341-project2-qlab.onrender.com",
+  "host": "cse-341-project2-qlab.onrender.com",
   "basePath": "/",
   "schemes": [
     "https"
