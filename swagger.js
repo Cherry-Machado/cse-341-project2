@@ -6,7 +6,7 @@ const doc = {
     description: 'This is my personal project of Store API of CSE 341 Web Services Class',
   },
   host: 'https://cse-341-project2-qlab.onrender.com/',
-  schemes: ['http', 'https'],
+  schemes: ['https'],
 };
 
 const outputFile = './swagger.json';
