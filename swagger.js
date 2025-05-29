@@ -5,7 +5,7 @@ const doc = {
     title: 'My Store API',
     description: 'This is my personal project of Store API of CSE 341 Web Services Class',
   },
-  host: 'https://cse-341-project2-0a7o.onrender.com/',
+  host: 'https://cse-341-project2-qlab.onrender.com/',
   schemes: ['http', 'https'],
 };
 
