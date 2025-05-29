@@ -1,0 +1,16 @@
+const swaggerAutogen = require('swagger-autogen')();
+
+const doc = {
+  info: {
+    title: 'My Store API',
+    description: 'This is my personal project of Store API of CSE 341 Web Services Class',
+  },
+  host: 'https://cse-341-project2-0a7o.onrender.com/',
+  schemes: ['http', 'https'],
+};
+
+const outputFile = './swagger.json';
+const endpointsFiles = ['./routes/index.js'];
+
+// generate swagger.json
+swaggerAutogen(outputFile, endpointsFiles, doc);

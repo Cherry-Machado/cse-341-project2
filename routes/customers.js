@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const customersControllers = require('../controllers/products');
+const customersControllers = require('../controllers/customers');
 
 router.get('/', customersControllers.getAll);
 
