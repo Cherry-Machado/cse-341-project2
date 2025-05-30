@@ -1,4 +1,3 @@
-// middleware/errorHandler.js
 const { MongoError } = require('mongodb');
 const { 
   CastError, 

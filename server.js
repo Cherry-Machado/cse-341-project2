@@ -3,6 +3,7 @@ const mongodb = require('./data/database');
 const app = express();
 const process = require('process');
 const bodyParser = require('body-parser');
+const errorHandler = require('./middleware/errorHandler');
 require('dotenv').config();
 
 
@@ -23,7 +24,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', require('./routes')); 
+app.use('/', require('./routes'));
+
+app.use(errorHandler);
 
 const port = process.env.PORT || 3000; // Fallback to 3000 if no env var
 
