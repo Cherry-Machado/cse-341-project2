@@ -33,12 +33,6 @@ const getSingle = async (req, res, next) => {
 const createCustomer = async (req, res, next) => {
     //#swagger.tags=["Customers"];
     try {
-        /*const customer = {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            phone: req.body.phone,
-        };*/
         const customerData = validateCustomer(req.body);
         const response = await mongodb.getDatabase().db().collection('customers').insertOne(customerData);
         if (response.acknowledged) {
@@ -55,15 +49,10 @@ const updateCustomer = async (req, res, next) => {
     //#swagger.tags=["Customers"];
     try {
         const customerId = validateObjectId(req.params.id);
-        const customer = {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            phone: req.body.phone,
-        };
-        const response = await mongodb.getDatabase().db().collection('customers').replaceOne({ '_id': customerId }, customer);
+        const customerData = validateCustomer(req.body);
+        const response = await mongodb.getDatabase().db().collection('customers').replaceOne({ '_id': customerId }, customerData);
         if (response.modifiedCount === 0) {
-            throw new NotFoundError('customer');
+            throw new NotFoundError('customerData');
         }
         res.status(204).send();
     } catch (error) {

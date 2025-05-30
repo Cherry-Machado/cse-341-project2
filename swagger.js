@@ -2,8 +2,8 @@ const swaggerAutogen = require('swagger-autogen')();
 
 const doc = {
   info: {
-    title: 'My Store API',
-    description: 'This is my personal project of Store API of CSE 341 Web Services Class',
+    title: 'CSE 341 Web Services - Cherry Machado',
+    description: 'This is my personal project of Store API Week 3 (Handling-Errors and Validations)',
   },
   host: 'cse-341-project2-qlab.onrender.com',
   schemes: ['https'],

@@ -2,24 +2,6 @@
 const Joi = require('joi');
 const { ValidationError } = require('../errors/databaseErrors');
 
-// Define specifications schema
-const specificationsSchema = Joi.object({
-  storage: Joi.string().min(2).max(50),
-  ram: Joi.string().min(2).max(50),
-  screenSize: Joi.string().min(2).max(50),
-  batteryLife: Joi.string().min(2).max(50),
-  color: Joi.string().min(2).max(50),
-  material: Joi.string().min(2).max(50),
-  dimensions: Joi.string().min(2).max(50),
-  weight: Joi.string().min(2).max(50)
-}).custom((value, helpers) => {
-  // Allow either an object or a string for specifications
-  if (typeof value === 'string') {
-    return { description: value };
-  }
-  return value;
-}).default({});
-
 // Base product schema
 const productSchema = Joi.object({
   name: Joi.string().min(2).max(100).required()
@@ -68,7 +50,7 @@ const productSchema = Joi.object({
   
   isAvailable: Joi.boolean().default(true),
   
-  specifications: specificationsSchema
+  specifications: Joi.string().min(2).max(100).required()
 });
 
 // Validate product creation
