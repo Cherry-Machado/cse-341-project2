@@ -59,9 +59,6 @@
                 },
                 "phone": {
                   "example": "any"
-                },
-                "address": {
-                  "example": "any"
                 }
               }
             }
@@ -128,9 +125,6 @@
                   "example": "any"
                 },
                 "phone": {
-                  "example": "any"
-                },
-                "address": {
                   "example": "any"
                 }
               }
@@ -211,10 +205,10 @@
                 "category": {
                   "example": "any"
                 },
-                "specifications": {
+                "isAvailable": {
                   "example": "any"
                 },
-                "isAvailable": {
+                "specifications": {
                   "example": "any"
                 }
               }
@@ -287,10 +281,10 @@
                 "category": {
                   "example": "any"
                 },
-                "specifications": {
+                "isAvailable": {
                   "example": "any"
                 },
-                "isAvailable": {
+                "specifications": {
                   "example": "any"
                 }
               }
