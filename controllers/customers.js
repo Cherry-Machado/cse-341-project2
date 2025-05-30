@@ -28,10 +28,6 @@ const createCustomer = async (req, res) => {
         lastName: req.body.lastName,
         email: req.body.email,
         phone: req.body.phone,
-        street: req.body.address.street,
-        city: req.body.address.city,
-        state: req.body.address.state,
-        zip: req.body.address.zip
     }
     const response = await mongodb.getDatabase().db().collection('customers').insertOne(customer);
     if (response.acknowledged > 0) {
@@ -49,10 +45,6 @@ const updateCustomer = async (req, res) => {
         lastName: req.body.lastName,
         email: req.body.email,
         phone: req.body.phone,
-        street: req.body.address.street,
-        city: req.body.address.city,
-        state: req.body.address.state,
-        zip: req.body.address.zip
     }
     const response = await mongodb.getDatabase().db().collection('customers').replaceOne({ '_id': customerId }, customer);
     if (response.modifiedCount > 0) {

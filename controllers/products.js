@@ -29,10 +29,8 @@ const createProduct = async (req, res) => {
         price: req.body.price,
         stock: req.body.stock,
         category: req.body.category,
-        storage:req.body.specifications.storage,
-        ram: req.body.specifications.ram,
-        screenSize: req.body.specifications.screenSize,
-        isAvailable: req.body.isAvailable
+        isAvailable: req.body.isAvailable,
+        specifications: req.body.specifications
     }
     const response = await mongodb.getDatabase().db().collection('products').insertOne(product);
     if (response.acknowledged > 0) {
@@ -51,10 +49,8 @@ const updateProduct = async (req, res) => {
         price: req.body.price,
         stock: req.body.stock,
         category: req.body.category,
-        storage:req.body.specifications.storage,
-        ram: req.body.specifications.ram,
-        screenSize: req.body.specifications.screenSize,
-        isAvailable: req.body.isAvailable
+        isAvailable: req.body.isAvailable,
+        specifications: req.body.specifications
     }
     const response = await mongodb.getDatabase().db().collection('products').replaceOne({ '_id': productId }, product);
     if (response.modifiedCount > 0) {
