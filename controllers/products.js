@@ -60,13 +60,10 @@ const updateProduct = async (req, res, next) => {
         // Add validation here
         const validatedData = validateProductUpdate(req.body);
         
-        const response = await mongodb.getDatabase().db().collection('products').replaceOne(
-            { '_id': productId },
-            validatedData
-        );
+        const response = await mongodb.getDatabase().db().collection('products').replaceOne({ '_id': productId }, validatedData);
         
         if (response.modifiedCount === 0) {
-            throw new NotFoundError('product');
+            throw new NotFoundError('validateData');
         }
         
         res.status(200).json({ 

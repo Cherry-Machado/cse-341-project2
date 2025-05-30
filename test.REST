@@ -32,16 +32,15 @@ GET http://localhost:3000/products
 GET http://localhost:3000/products/68390865cd03ea53437c4f14
 
 ###
-PUT http://localhost:3000/products/683906c8cd03ea53437c4f13
+PUT http://localhost:3000/products/68390865cd03ea53437c4f14
 content-type: application/json
 
 {
-  "_id": "68390865cd03ea53437c4f14",
-  "name": "Tablet 10",
+  "name": "Tablet 270",
   "brand": "Samsung",
   "price": 250,
   "stock": 55,
-  "category": "",
+  "category": "Electronics",
   "isAvailable": false,
   "specifications": "64 GB of Memory Ram"
 }
