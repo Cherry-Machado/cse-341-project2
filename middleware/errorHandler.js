@@ -7,9 +7,10 @@ const {
 } = require('../errors/databaseErrors');
 
 function errorHandler(err, req, res, next) {
+  console.log(next)
   console.error(err.stack);
 
-  // Errores personalizados
+  // Personalised Errors
   if (err instanceof CastError) {
     return res.status(err.statusCode).json({
       status: 'error',
@@ -51,6 +52,7 @@ function errorHandler(err, req, res, next) {
   if (err instanceof MongoError) {
     switch (err.code) {
       case 11000:
+        // eslint-disable-next-line no-case-declarations
         const key = Object.keys(err.keyPattern)[0];
         return res.status(409).json({
           status: 'error',

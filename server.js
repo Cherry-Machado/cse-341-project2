@@ -24,9 +24,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(errorHandler);
+
 app.use('/', require('./routes'));
 
-app.use(errorHandler);
 
 const port = process.env.PORT || 3000; // Fallback to 3000 if no env var
 
