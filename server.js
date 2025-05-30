@@ -4,6 +4,7 @@ const app = express();
 const process = require('process');
 const bodyParser = require('body-parser');
 const errorHandler = require('./middleware/errorHandler');
+const notFoundHandler = require('./middleware/notFoundHandler');
 require('dotenv').config();
 
 
@@ -24,9 +25,15 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/', require('./routes'));
+
+// Middleware for routes not found (404)
+app.use(notFoundHandler);
+
+// General errors handling
 app.use(errorHandler);
 
-app.use('/', require('./routes'));
+
 
 
 const port = process.env.PORT || 3000; // Fallback to 3000 if no env var
