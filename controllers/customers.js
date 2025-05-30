@@ -1,6 +1,7 @@
 const mongodb = require('../data/database');
 const { validateObjectId } = require('../utils/validate');
 const { NotFoundError } = require('../errors/databaseErrors');
+const validateCustomer = require('../schemas/customerSchema');
 
 const getAll = async (req, res, next) => {
     //#swagger.tags=["Customers"];
@@ -32,13 +33,14 @@ const getSingle = async (req, res, next) => {
 const createCustomer = async (req, res, next) => {
     //#swagger.tags=["Customers"];
     try {
-        const customer = {
+        /*const customer = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
             phone: req.body.phone,
-        };
-        const response = await mongodb.getDatabase().db().collection('customers').insertOne(customer);
+        };*/
+        const customerData = validateCustomer(req.body);
+        const response = await mongodb.getDatabase().db().collection('customers').insertOne(customerData);
         if (response.acknowledged) {
             res.status(201).json({ id: response.insertedId });
         } else {

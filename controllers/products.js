@@ -1,6 +1,8 @@
+// controllers/products.js
 const mongodb = require('../data/database');
 const { validateObjectId } = require('../utils/validate');
 const { NotFoundError } = require('../errors/databaseErrors');
+const { validateProduct, validateProductUpdate } = require('../schemas/productSchema'); // Add this import
 
 const getAll = async (req, res, next) => {
     //#swagger.tags=["Products"];
@@ -32,20 +34,18 @@ const getSingle = async (req, res, next) => {
 const createProduct = async (req, res, next) => {
     //#swagger.tags=["Products"];
     try {
-        const product = {
-            name: req.body.name,
-            brand: req.body.brand,
-            price: req.body.price,
-            stock: req.body.stock,
-            category: req.body.category,
-            isAvailable: req.body.isAvailable,
-            specifications: req.body.specifications
-        };
-        const response = await mongodb.getDatabase().db().collection('products').insertOne(product);
+        // Add validation here
+        const validatedData = validateProduct(req.body);
+        
+        const response = await mongodb.getDatabase().db().collection('products').insertOne(validatedData);
+        
         if (response.acknowledged) {
-            res.status(201).json({ id: response.insertedId });
+            res.status(201).json({ 
+                id: response.insertedId,
+                message: 'Product created successfully'
+            });
         } else {
-            throw new Error('Error al crear el producto');
+            throw new Error('Failed to create product');
         }
     } catch (error) {
         next(error);
@@ -56,20 +56,22 @@ const updateProduct = async (req, res, next) => {
     //#swagger.tags=["Products"];
     try {
         const productId = validateObjectId(req.params.id);
-        const product = {
-            name: req.body.name,
-            brand: req.body.brand,
-            price: req.body.price,
-            stock: req.body.stock,
-            category: req.body.category,
-            isAvailable: req.body.isAvailable,
-            specifications: req.body.specifications
-        };
-        const response = await mongodb.getDatabase().db().collection('products').replaceOne({ '_id': productId }, product);
+        
+        // Add validation here
+        const validatedData = validateProductUpdate(req.body);
+        
+        const response = await mongodb.getDatabase().db().collection('products').replaceOne(
+            { '_id': productId },
+            validatedData
+        );
+        
         if (response.modifiedCount === 0) {
             throw new NotFoundError('product');
         }
-        res.status(204).send();
+        
+        res.status(200).json({ 
+            message: 'Product updated successfully'
+        });
     } catch (error) {
         next(error);
     }

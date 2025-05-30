@@ -9,7 +9,6 @@ const {
 } = require('../errors/databaseErrors');
 
 function errorHandler(err, req, res, next) {
-
   console.error('Error occurred:', err.stack);
 
   // Standard error response structure
@@ -66,7 +65,7 @@ function errorHandler(err, req, res, next) {
           ? 'Check the API documentation for available endpoints' 
           : 'The requested resource may have been deleted or never existed'
       };
-
+      
       if (err.resource === 'route') {
         baseErrorResponse.error.details.documentation = `${req.protocol}://${req.get('host')}/api-docs`;
       }
@@ -82,7 +81,7 @@ function errorHandler(err, req, res, next) {
     };
 
     switch (err.code) {
-      case 11000: // Duplicate key
+      case 11000: {
         const duplicateField = Object.keys(err.keyPattern)[0];
         baseErrorResponse.error.statusCode = 409;
         baseErrorResponse.error.type = 'duplicate_key';
@@ -90,12 +89,13 @@ function errorHandler(err, req, res, next) {
         baseErrorResponse.error.details.field = duplicateField;
         baseErrorResponse.error.details.conflictingValue = err.keyValue[duplicateField];
         break;
-      case 2: // Bad value
+      }
+      case 2:
         baseErrorResponse.error.statusCode = 400;
         baseErrorResponse.error.type = 'invalid_value';
         baseErrorResponse.error.message = 'Invalid value provided';
         break;
-      case 121: // Document validation failed
+      case 121:
         baseErrorResponse.error.statusCode = 422;
         baseErrorResponse.error.type = 'validation_failed';
         baseErrorResponse.error.message = 'Document validation failed';
