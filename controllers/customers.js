@@ -52,7 +52,7 @@ const updateCustomer = async (req, res, next) => {
         const customerData = validateCustomer(req.body);
         const response = await mongodb.getDatabase().db().collection('customers').replaceOne({ '_id': customerId }, customerData);
         if (response.modifiedCount === 0) {
-            throw new NotFoundError('customerData');
+            throw new NotFoundError('customer');
         }
         res.status(204).send();
     } catch (error) {
