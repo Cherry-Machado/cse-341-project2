@@ -8,7 +8,7 @@ const {
 } = require('../errors/databaseErrors');
 
 // ==============================================
-// Funciones auxiliares para manejo de errores
+// Helper functions for error handling
 // ==============================================
 
 const buildErrorResponse = (req) => ({
@@ -109,7 +109,7 @@ const addDevelopmentDetails = (err, errorResponse) => {
 };
 
 // ==============================================
-// Middlewares de manejo de errores
+// Middlewares for error handling
 // ==============================================
 
 const handleJsonErrors = (err, req, res, next) => {
@@ -169,7 +169,7 @@ const handleAppErrors = (err, req, res, next) => {
 };
 
 // ==============================================
-// Exportación de middlewares
+// Export middlewares
 // ==============================================
 
 module.exports = {

@@ -1,4 +1,3 @@
-// middleware/notFoundHandler.js
 const { NotFoundError } = require('../errors/databaseErrors');
 
 module.exports = (req, res, next) => {
