@@ -11,6 +11,26 @@ const {
 function errorHandler(err, req, res, next) {
   console.error('Error occurred:', err.stack);
 
+  // Dealings errors of parsing JSON especifically
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({
+      success: false,
+      error: {
+        type: 'invalid_json',
+        message: 'Invalid JSON payload',
+        statusCode: 400,
+        details: {
+          suggestion: 'Check your request body for JSON syntax errors',
+          commonIssues: [
+            'Unquoted property values',
+            'Trailing commas',
+            'Missing quotes around strings'
+          ]
+        }
+      }
+    });
+  }
+
   // Standard error response structure
   const baseErrorResponse = {
     success: false,
