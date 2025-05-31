@@ -1,4 +1,3 @@
-// middleware/errorHandler.js
 const { MongoError } = require('mongodb');
 const { 
   DatabaseError, 
@@ -8,142 +7,172 @@ const {
   NotFoundError
 } = require('../errors/databaseErrors');
 
-function errorHandler(err, req, res, next) {
-  console.error('Error occurred:', err.stack);
+// ==============================================
+// Funciones auxiliares para manejo de errores
+// ==============================================
 
-  // Dealings errors of parsing JSON especifically
-  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+const buildErrorResponse = (req) => ({
+  success: false,
+  error: {
+    type: 'server_error',
+    message: 'An unexpected error occurred',
+    statusCode: 500,
+    timestamp: new Date().toISOString(),
+    path: req.originalUrl,
+    method: req.method,
+    details: {}
+  }
+});
+
+const handleDatabaseError = (err, errorResponse, req) => {
+  errorResponse.error.type = err.type;
+  errorResponse.error.message = err.message;
+  errorResponse.error.statusCode = err.statusCode;
+
+  if (err instanceof CastError) {
+    errorResponse.error.details = {
+      field: err.field,
+      invalidValue: err.value,
+      expectedType: 'ObjectId',
+      suggestion: 'Please provide a valid MongoDB ObjectId'
+    };
+  } else if (err instanceof DuplicateError) {
+    errorResponse.error.details = {
+      field: err.field,
+      constraint: 'unique',
+      suggestion: 'The value must be unique across all documents'
+    };
+  } else if (err instanceof ValidationError) {
+    errorResponse.error.details = {
+      validationErrors: err.details.map(detail => ({
+        field: detail.path.join('.'),
+        code: detail.type,
+        message: detail.message,
+        providedValue: detail.context.value
+      })),
+      suggestion: 'Please review the validation requirements'
+    };
+  } else if (err instanceof NotFoundError) {
+    errorResponse.error.details = {
+      resourceType: err.resource,
+      suggestion: err.resource === 'route' 
+        ? 'Check the API documentation for available endpoints' 
+        : 'The requested resource may have been deleted or never existed'
+    };
+    
+    if (err.resource === 'route') {
+      errorResponse.error.details.documentation = `${req.protocol}://${req.get('host')}/api-docs`;
+    }
+  }
+};
+
+const handleMongoError = (err, errorResponse) => {
+  errorResponse.error.type = 'database_error';
+  errorResponse.error.message = 'Database operation failed';
+  errorResponse.error.details = {
+    code: err.code,
+    codeName: err.codeName
+  };
+
+  switch (err.code) {
+    case 11000: {
+      const duplicateField = Object.keys(err.keyPattern)[0];
+      errorResponse.error.statusCode = 409;
+      errorResponse.error.type = 'duplicate_key';
+      errorResponse.error.message = `Duplicate value for field: ${duplicateField}`;
+      errorResponse.error.details.field = duplicateField;
+      errorResponse.error.details.conflictingValue = err.keyValue[duplicateField];
+      break;
+    }
+    case 2:
+      errorResponse.error.statusCode = 400;
+      errorResponse.error.type = 'invalid_value';
+      errorResponse.error.message = 'Invalid value provided';
+      break;
+    case 121:
+      errorResponse.error.statusCode = 422;
+      errorResponse.error.type = 'validation_failed';
+      errorResponse.error.message = 'Document validation failed';
+      errorResponse.error.details.validationErrors = err.errInfo?.details?.schemaRulesNotSatisfied;
+      break;
+  }
+};
+
+const addDevelopmentDetails = (err, errorResponse) => {
+  errorResponse.error.stack = err.stack;
+  if (err instanceof MongoError) {
+    errorResponse.error.internalDetails = {
+      errInfo: err.errInfo,
+      operationType: err.operationType
+    };
+  }
+};
+
+// ==============================================
+// Middlewares de manejo de errores
+// ==============================================
+
+const handleJsonErrors = (err, req, res, next) => {
+  if (err.type === 'invalid_json' || (err instanceof SyntaxError && err.status === 400)) {
+    console.error('Invalid JSON detected:', err.message);
+    
     return res.status(400).json({
       success: false,
       error: {
         type: 'invalid_json',
         message: 'Invalid JSON payload',
         statusCode: 400,
+        timestamp: new Date().toISOString(),
         details: {
-          suggestion: 'Check your request body for JSON syntax errors',
-          commonIssues: [
-            'Unquoted property values',
-            'Trailing commas',
-            'Missing quotes around strings'
-          ]
+          suggestion: 'Verify your JSON syntax and ensure all strings are quoted',
+          commonMistakes: [
+            'Unquoted values (use "value" instead of value)',
+            'Trailing commas in objects/arrays',
+            'Invalid number formats',
+            'Missing commas between properties'
+          ],
+          validExample: {
+            "name": "Product Name",
+            "price": 29.99,
+            "stock": 100,
+            "specifications": "64GB RAM"
+          }
         }
       }
     });
   }
+  next(err);
+};
 
-  // Standard error response structure
-  const baseErrorResponse = {
-    success: false,
-    error: {
-      type: 'server_error',
-      message: 'An unexpected error occurred',
-      statusCode: 500,
-      timestamp: new Date().toISOString(),
-      path: req.originalUrl,
-      method: req.method,
-      details: {}
-    }
-  };
+const handleAppErrors = (err, req, res, next) => {
+  console.error(`Application error [${err.name}]:`, err.message);
 
-  // Handle custom DatabaseError instances
+  const errorResponse = buildErrorResponse(req);
+  errorResponse.error.message = err.message;
+
   if (err instanceof DatabaseError) {
-    baseErrorResponse.error.type = err.type;
-    baseErrorResponse.error.message = err.message;
-    baseErrorResponse.error.statusCode = err.statusCode;
-
-    // Enhanced error details based on error type
-    if (err instanceof CastError) {
-      baseErrorResponse.error.details = {
-        field: err.field,
-        invalidValue: err.value,
-        expectedType: 'ObjectId',
-        suggestion: 'Please provide a valid MongoDB ObjectId'
-      };
-    } 
-    else if (err instanceof DuplicateError) {
-      baseErrorResponse.error.details = {
-        field: err.field,
-        constraint: 'unique',
-        suggestion: 'The value must be unique across all documents'
-      };
-    } 
-    else if (err instanceof ValidationError) {
-      baseErrorResponse.error.details = {
-        validationErrors: err.details.map(detail => ({
-          field: detail.path.join('.'),
-          code: detail.type,
-          message: detail.message,
-          providedValue: detail.context.value
-        })),
-        suggestion: 'Please review the validation requirements'
-      };
-    } 
-    else if (err instanceof NotFoundError) {
-      baseErrorResponse.error.details = {
-        resourceType: err.resource,
-        suggestion: err.resource === 'route' 
-          ? 'Check the API documentation for available endpoints' 
-          : 'The requested resource may have been deleted or never existed'
-      };
-      
-      if (err.resource === 'route') {
-        baseErrorResponse.error.details.documentation = `${req.protocol}://${req.get('host')}/api-docs`;
-      }
-    }
-  }
-  // Handle MongoDB native errors
-  else if (err instanceof MongoError) {
-    baseErrorResponse.error.type = 'database_error';
-    baseErrorResponse.error.message = 'Database operation failed';
-    baseErrorResponse.error.details = {
-      code: err.code,
-      codeName: err.codeName
-    };
-
-    switch (err.code) {
-      case 11000: {
-        const duplicateField = Object.keys(err.keyPattern)[0];
-        baseErrorResponse.error.statusCode = 409;
-        baseErrorResponse.error.type = 'duplicate_key';
-        baseErrorResponse.error.message = `Duplicate value for field: ${duplicateField}`;
-        baseErrorResponse.error.details.field = duplicateField;
-        baseErrorResponse.error.details.conflictingValue = err.keyValue[duplicateField];
-        break;
-      }
-      case 2:
-        baseErrorResponse.error.statusCode = 400;
-        baseErrorResponse.error.type = 'invalid_value';
-        baseErrorResponse.error.message = 'Invalid value provided';
-        break;
-      case 121:
-        baseErrorResponse.error.statusCode = 422;
-        baseErrorResponse.error.type = 'validation_failed';
-        baseErrorResponse.error.message = 'Document validation failed';
-        baseErrorResponse.error.details.validationErrors = err.errInfo?.details?.schemaRulesNotSatisfied;
-        break;
-    }
-  }
-  // Handle other JavaScript errors
-  else {
-    baseErrorResponse.error.details = {
+    handleDatabaseError(err, errorResponse, req);
+  } else if (err instanceof MongoError) {
+    handleMongoError(err, errorResponse);
+  } else {
+    errorResponse.error.details = {
       errorType: err.name,
       errorMessage: err.message
     };
   }
 
-  // Development-only details
   if (process.env.NODE_ENV === 'development') {
-    baseErrorResponse.error.stack = err.stack;
-    if (err instanceof MongoError) {
-      baseErrorResponse.error.internalDetails = {
-        errInfo: err.errInfo,
-        operationType: err.operationType
-      };
-    }
+    addDevelopmentDetails(err, errorResponse);
   }
 
-  // Send the formatted error response
-  res.status(baseErrorResponse.error.statusCode).json(baseErrorResponse);
-}
+  res.status(errorResponse.error.statusCode).json(errorResponse);
+};
 
-module.exports = errorHandler;
+// ==============================================
+// Exportación de middlewares
+// ==============================================
+
+module.exports = {
+  handleJsonErrors,
+  handleAppErrors
+};

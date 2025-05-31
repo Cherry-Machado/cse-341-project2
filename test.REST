@@ -1,7 +1,7 @@
 GET http://localhost:3000/customers
 
 ###
-GET http://localhost:3000/customers/683906c8cd03ea53437c4f13
+GET http://localhost:3000/customers/683a03afc590030515ce1520
 
 ###
 PUT http://localhost:3000/customers/683906c8cd03ea53437c4f13
@@ -36,11 +36,25 @@ PUT http://localhost:3000/products/68390865cd03ea53437c4f14
 content-type: application/json
 
 {
-  "name": "Tablet 270",
-  "brand": "Samsung",
-  "price": 60,
-  "stock": 50,
-  "category": "Electronics",
-  "isAvailable": false,
-  "specifications": "64 GB of Memory Ram"
+  "name": "Smartphone X",
+    "brand": "TechMaster",
+    "price": 699.99,
+    "stock": 45,
+    "category": "Electronics",
+    "isAvailable": true,
+    "specifications": "64 giba of Ram"
+}
+
+###
+POST http://localhost:3000/products/
+content-type: application/json
+
+{
+  "name": "Telefono Iphone 15",
+    "brand": "Iphone",
+    "price": 1000,
+    "stock": 45,
+    "category": "Electronics",
+    "isAvailable": true,
+    "specifications": "64 giba of Ram"
 }

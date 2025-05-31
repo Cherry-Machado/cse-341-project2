@@ -1,47 +1,25 @@
 const express = require('express');
-const mongodb = require('./data/database');
 const app = express();
-const process = require('process');
-const bodyParser = require('body-parser');
-const errorHandler = require('./middleware/errorHandler');
-const notFoundHandler = require('./middleware/notFoundHandler');
-require('dotenv').config();
 
+// Middlewares
+const { jsonParser, urlencodedParser } = require('./middleware/bodyParserConfig');
+const { handleJsonErrors, handleAppErrors } = require('./middleware/errorHandler');
+const { securityHeaders } = require('./middleware/securityHeaders');
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Configuración básica
+app.use(securityHeaders);
+app.use(jsonParser);
+app.use(urlencodedParser);
 
-// Add support for CORS
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  );
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, PATCH, PUT, DELETE, OPTIONS'
-  );
-  next();
-});
+// Manejo de errores de JSON debe ir después de bodyParser pero antes de las rutas
+app.use(handleJsonErrors);
 
+// Rutas
 app.use('/', require('./routes'));
 
-// Middleware for routes not found (404)
-app.use(notFoundHandler);
+// Manejo de otros errores
+app.use(handleAppErrors);
 
-// General errors handling
-app.use(errorHandler);
-
-
-
-
-const port = process.env.PORT || 3000; // Fallback to 3000 if no env var
-
-mongodb.initDb((err) => {
-  if (err) {
-    console.log(err);
-  } else {
-    app.listen(port, () => { console.log('Database is listening and Node running on port ' + port)});
-  }
-});
+// Inicio del servidor
+const port = process.env.PORT || 3000;
+require('./middleware/databaseConnection').initDatabase(app, port);
