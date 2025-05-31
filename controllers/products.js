@@ -2,7 +2,7 @@
 const mongodb = require('../data/database');
 const { validateObjectId } = require('../utils/validate');
 const { NotFoundError } = require('../errors/databaseErrors');
-const { validateProduct, validateProductUpdate } = require('../schemas/productSchema'); // Add this import
+const { validateProduct, validateProductUpdate } = require('../schemas/productSchema');
 
 const getAll = async (req, res, next) => {
     //#swagger.tags=["Products"];
@@ -63,7 +63,7 @@ const updateProduct = async (req, res, next) => {
         const response = await mongodb.getDatabase().db().collection('products').replaceOne({ '_id': productId }, validatedData);
         
         if (response.modifiedCount === 0) {
-            throw new NotFoundError('validateData');
+            throw new NotFoundError('product');
         }
         
         res.status(200).json({ 
