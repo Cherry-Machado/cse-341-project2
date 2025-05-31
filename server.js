@@ -5,6 +5,7 @@ const app = express();
 const { jsonParser, urlencodedParser } = require('./middleware/bodyParserConfig');
 const { handleJsonErrors, handleAppErrors } = require('./middleware/errorHandler');
 const { securityHeaders } = require('./middleware/securityHeaders');
+const notFoundHandler = require('./middleware/notFoundHandler'); 
 
 // Basic Configuration
 app.use(securityHeaders);
@@ -16,6 +17,9 @@ app.use(handleJsonErrors);
 
 // Routes
 app.use('/', require('./routes'));
+
+// 404 Handler
+app.use(notFoundHandler);
 
 // Handling Errors
 app.use(handleAppErrors);
