@@ -63,7 +63,7 @@ const updateProduct = async (req, res, next) => {
         const response = await mongodb.getDatabase().db().collection('products').replaceOne({ '_id': productId }, validatedData);
         
         if (response.modifiedCount === 0) {
-            throw new NotFoundError('product');
+            throw new NotFoundError('validateData');
         }
         
         res.status(200).json({ 

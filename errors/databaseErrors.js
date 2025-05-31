@@ -1,4 +1,3 @@
-// errors/databaseErrors.js
 class DatabaseError extends Error {
   constructor(message, type, statusCode = 400) {
     super(message);

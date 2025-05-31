@@ -132,10 +132,13 @@ const handleJsonErrors = (err, req, res, next) => {
             'Missing commas between properties'
           ],
           validExample: {
-            "name": "Product Name",
-            "price": 29.99,
-            "stock": 100,
-            "specifications": "64GB RAM"
+            "name": "Telephone Iphone 15",
+            "brand": "Iphone",
+            "price": 1000,
+            "stock": 45,
+            "category": "Electronics",
+            "isAvailable": true,
+            "specifications": "64 GB Ram"
           }
         }
       }
