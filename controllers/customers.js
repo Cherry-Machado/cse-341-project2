@@ -54,7 +54,7 @@ const updateCustomer = async (req, res, next) => {
         if (response.modifiedCount === 0) {
             throw new NotFoundError('customer');
         }
-        res.status(204).send();
+        res.status(200).send();
     } catch (error) {
         next(error);
     }
