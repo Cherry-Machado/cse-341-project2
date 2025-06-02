@@ -20,13 +20,13 @@ const notFoundHandler = require('./middleware/notFoundHandler');
 app
  .use(jsonParser)
  app.use(session({
-  secret: process.env.SESSION_SECRET || "secret",
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: { 
     secure: process.env.NODE_ENV === 'production',
     httpOnly: false,
-    maxAge: 24 * 60 * 60 * 1000 // 1 día
+    maxAge: 24 * 60 * 60 * 1000 // 1 day
   },
   store: MongoStore.create({
     mongoUrl: process.env.MONGODB_URL,
@@ -37,9 +37,9 @@ app
  .use (passport.session())
  .use(securityHeaders)
  .use(cors({
-  origin: true, // o dominios específicos
+  origin: true, 
   methods: ['GET','POST','PUT','DELETE','PATCH','OPTIONS'],
-  credentials: true // Permitir cookies de sesión
+  credentials: true //Let cookies of sesión
   }))
  .use(urlencodedParser);
  
