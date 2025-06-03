@@ -4,7 +4,7 @@ const { getDbInstance } = require('../data/database');
 class User {
     constructor(profile) {
         this.githubId = profile.id;
-        this.displayName = profile.displayName  || profile.username;
+        this.displayName = profile.displayName;
         this.username = profile.username;
         this.profileUrl = profile.profileUrl;
         this.createdAt = new Date();

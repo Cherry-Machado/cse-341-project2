@@ -27,9 +27,9 @@ router.get('/', (req, res) => {
 });
 
 // GitHub auth routes
-//router.get('/login', passport.authenticate('github', { scope: ['user:username'] }));
+//router.get('/login', passport.authenticate('github', { scope: ['user:user'] }));
 
-router.get('/login', passport.authenticate('github', { scope: ['user'] }));
+router.get('/login', passport.authenticate('github', { scope: ['user:user'] }));
 
 
 router.get('/github/callback', 
