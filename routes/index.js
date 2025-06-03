@@ -29,7 +29,7 @@ router.get('/', (req, res) => {
 // GitHub auth routes
 //router.get('/login', passport.authenticate('github', { scope: ['user:user'] }));
 
-router.get('/login', passport.authenticate('github', { scope: ['username'] }));
+router.get('/login', passport.authenticate('github'));
 
 
 router.get('/github/callback', 
