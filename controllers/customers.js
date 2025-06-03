@@ -36,7 +36,11 @@ const createCustomer = async (req, res, next) => {
         const customerData = validateCustomer(req.body);
         const response = await mongodb.getDatabase().db().collection('customers').insertOne(customerData);
         if (response.acknowledged) {
-            res.status(201).json({ id: response.insertedId });
+            res.status(201).json({
+                success: true, 
+                id: response.insertedId,
+                message: 'Customer created successfully'
+            });
         } else {
             throw new Error('Error al crear el cliente');
         }
@@ -56,6 +60,7 @@ const updateCustomer = async (req, res, next) => {
         }
         res.status(200).json({ 
             success: true,
+            id: response.insertedId,
             message: 'Customer updated successfully'
         });
     } catch (error) {
@@ -71,7 +76,10 @@ const deleteCustomer = async (req, res, next) => {
         if (response.deletedCount === 0) {
             throw new NotFoundError('customer');
         }
-        res.status(204).send();
+        res.status(204).json({ 
+            success: true,
+            message: 'Customer deleted successfully'
+        });
     } catch (error) {
         next(error);
     }

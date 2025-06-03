@@ -68,7 +68,8 @@ const updateProduct = async (req, res, next) => {
         }
         
         res.status(200).json({
-            success: true, 
+            success: true,
+            id: response.insertedId, 
             message: 'Product updated successfully'
         });
     } catch (error) {
@@ -85,7 +86,7 @@ const deleteProduct = async (req, res, next) => {
             throw new NotFoundError('product');
         }
         res.status(204).json({
-            success: true, 
+            success: true,
             message: 'Product deleted successfully'
         });
     } catch (error) {
