@@ -63,12 +63,7 @@ passport.use(new GitHubStrategy({
 async (accessToken, refreshToken, profile, done) => {
   try {
     console.log('GitHub Profile:', profile); // For depuration
-    const user = await User.findOrCreate({
-      id: profile.id,
-      displayName: profile.displayName || profile.username,
-      username: profile.username,
-      profileUrl: profile.profileUrl,
-    });
+    const user = await User.findOrCreate(profile);
     return done(null, user);
   } catch (err) {
     console.error('Error in GitHub strategy:', err);
