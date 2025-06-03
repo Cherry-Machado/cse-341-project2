@@ -54,7 +54,10 @@ const updateCustomer = async (req, res, next) => {
         if (response.modifiedCount === 0) {
             throw new NotFoundError('customer');
         }
-        res.status(200).send();
+        res.status(200).json({ 
+            success: true,
+            message: 'Customer updated successfully'
+        });
     } catch (error) {
         next(error);
     }

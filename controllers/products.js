@@ -40,7 +40,8 @@ const createProduct = async (req, res, next) => {
         const response = await mongodb.getDatabase().db().collection('products').insertOne(validatedData);
         
         if (response.acknowledged) {
-            res.status(201).json({ 
+            res.status(201).json({
+                success: true, 
                 id: response.insertedId,
                 message: 'Product created successfully'
             });
@@ -63,10 +64,11 @@ const updateProduct = async (req, res, next) => {
         const response = await mongodb.getDatabase().db().collection('products').replaceOne({ '_id': productId }, validatedData);
         
         if (response.modifiedCount === 0) {
-            throw new NotFoundError('validateData');
+            throw new NotFoundError('product');
         }
         
-        res.status(200).json({ 
+        res.status(200).json({
+            success: true, 
             message: 'Product updated successfully'
         });
     } catch (error) {
@@ -82,7 +84,10 @@ const deleteProduct = async (req, res, next) => {
         if (response.deletedCount === 0) {
             throw new NotFoundError('product');
         }
-        res.status(204).send();
+        res.status(204).json({
+            success: true, 
+            message: 'Product deleted successfully'
+        });
     } catch (error) {
         next(error);
     }
