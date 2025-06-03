@@ -76,7 +76,7 @@ const deleteCustomer = async (req, res, next) => {
         if (response.deletedCount === 0) {
             throw new NotFoundError('customer');
         }
-        res.status(204).json({ 
+        res.status(204).send({ 
             success: true,
             message: 'Customer deleted successfully'
         });

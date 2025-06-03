@@ -85,7 +85,7 @@ const deleteProduct = async (req, res, next) => {
         if (response.deletedCount === 0) {
             throw new NotFoundError('product');
         }
-        res.status(204).json({
+        res.status(204).send({
             success: true,
             message: 'Product deleted successfully'
         });
