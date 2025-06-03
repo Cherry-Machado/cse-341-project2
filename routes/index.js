@@ -27,7 +27,10 @@ router.get('/', (req, res) => {
 });
 
 // GitHub auth routes
-router.get('/login', passport.authenticate('github', { scope: ['user:username'] }));
+//router.get('/login', passport.authenticate('github', { scope: ['user:username'] }));
+
+router.get('/login', passport.authenticate('github'));
+
 
 router.get('/github/callback', 
     passport.authenticate('github', { 
@@ -40,7 +43,7 @@ router.get('/github/callback',
     }
 );
 
-router.get('/logout', (req, res, next) => {
+ router.get('/logout', (req, res, next) => {
     req.logout((err) => {
         if (err) {
             console.error('Logout error:', err);
@@ -51,6 +54,6 @@ router.get('/logout', (req, res, next) => {
             res.redirect('/');
         });
     });
-});
+}); 
 
 module.exports = router;
