@@ -21,8 +21,9 @@ const isAuthenticated = (req, res, next) => {
             }
         }
       });
-        
+     res.redirect('/api-docs');
     }
+    
     return next();
 };
 

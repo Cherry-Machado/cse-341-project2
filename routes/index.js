@@ -13,13 +13,13 @@ router.get('/', (req, res) => {
     if (req.isAuthenticated()) {
         res.send(`
             <h1>Welcome ${req.user.displayName}!</h1>
-            <img src="${req.user.profileUrl}" width="50" style="border-radius:50%">
-            <p>You are logged in via GitHub</p>
+            <h3>Profile URL: ${req.user.profileUrl}</h3>
+            <p>You are logged in via GitHub</p><br>
             <a href="/logout">Logout</a>
         `);
     } else {
         res.send(`
-            <h1>Welcome to the Store API</h1>
+            <h1>Welcome to Cherry Machado Store API</h1>
             <p>You are not logged in</p>
             <a href="/login">Login with GitHub</a>
         `);
